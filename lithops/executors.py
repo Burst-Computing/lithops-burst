@@ -234,6 +234,7 @@ class FunctionExecutor:
         map_function: Callable,
         map_iterdata: List[Union[List[Any], Tuple[Any, ...], Dict[str, Any]]],
         chunksize: Optional[int] = None,
+        burst: Optional[bool] = None,
         extra_args: Optional[Union[List[Any], Tuple[Any, ...], Dict[str, Any]]] = None,
         extra_env: Optional[Dict[str, str]] = None,
         runtime_memory: Optional[int] = None,
@@ -250,6 +251,7 @@ class FunctionExecutor:
         :param map_function: The function to map over the data
         :param map_iterdata: An iterable of input data (e.g python list).
         :param chunksize: Split map_iteradata in chunks of this size. Lithops spawns 1 worker per resulting chunk
+        :param burst: Determines if the map will be run in burst mode or not
         :param extra_args: Additional arguments to pass to each map_function activation
         :param extra_env: Additional environment variables for function environment
         :param runtime_memory: Memory (in MB) to use to run the functions
@@ -276,6 +278,7 @@ class FunctionExecutor:
             map_function=map_function,
             iterdata=map_iterdata,
             chunksize=chunksize,
+            burst=burst,
             runtime_meta=runtime_meta,
             runtime_memory=runtime_memory,
             extra_env=extra_env,

@@ -184,9 +184,10 @@ class OpenWhiskBackend:
         Invoke -- return information about this invocation
         """
         action_name = self._format_function_name(docker_image_name, runtime_memory)
+        burst = payload['burst']
 
         activation_id = self.cf_client.invoke(self.package, action_name,
-                                              payload, self.is_lithops_worker)
+                                              payload, self.is_lithops_worker, burst=burst)
 
         return activation_id
 

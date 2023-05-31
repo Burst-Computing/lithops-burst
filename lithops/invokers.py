@@ -28,7 +28,7 @@ from lithops.future import ResponseFuture
 from lithops.config import extract_storage_config
 from lithops.version import __version__
 from lithops.utils import verify_runtime_name, version_str, is_lithops_worker, iterchunks
-from lithops.constants import LOGGER_LEVEL, LOGS_DIR,\
+from lithops.constants import LOGGER_LEVEL, LOGS_DIR, \
     LOCALHOST, SERVERLESS, STANDALONE
 from lithops.util.metrics import PrometheusExporter
 
@@ -142,6 +142,7 @@ class Invoker:
                    'func_key': job.func_key,
                    'data_key': job.data_key,
                    'extra_env': job.extra_env,
+                   'burst': job.burst,
                    'total_calls': job.total_calls,
                    'execution_timeout': job.execution_timeout,
                    'data_byte_ranges': job.data_byte_ranges,
@@ -174,8 +175,12 @@ class Invoker:
                     .format(job.executor_id, job.job_id,
                             job.function_name, job.total_calls))
 
-        logger.debug('ExecutorID {} | JobID {} - Worker processes: {} - Chunksize: {}'
-                     .format(job.executor_id, job.job_id, job.worker_processes, job.chunksize))
+        if job.burst:
+            logger.debug('ExecutorID {} | JobID {} - Burst mode enabled - Chunksize: {}'
+                         .format(job.executor_id, job.job_id, job.chunksize))
+        else:
+            logger.debug('ExecutorID {} | JobID {} - Worker processes: {} - Chunksize: {}'
+                         .format(job.executor_id, job.job_id, job.worker_processes, job.chunksize))
 
         self.prometheus.send_metric(
             name='job_total_calls',
@@ -414,10 +419,20 @@ class FaaSInvoker(Invoker):
             self.should_run = True
             self._start_async_invokers()
 
-        if self.running_workers < self.max_workers:
+        def _callback(future):
+            future.result()
+
+        callids = range(job.total_calls)
+        if job.burst:
+            logger.debug('ExecutorID {} | JobID {} - Going to run burst activation...'
+                         .format(job.executor_id, job.job_id))
+            invoke_futures = []
+            future = self.executor.submit(self._invoke_task, job, callids)
+            future.add_done_callback(_callback)
+            invoke_futures.append(future)
+        elif self.running_workers < self.max_workers:
             free_workers = self.max_workers - self.running_workers
             total_direct = free_workers * job.chunksize
-            callids = range(job.total_calls)
             callids_to_invoke_direct = callids[:total_direct]
             callids_to_invoke_nondirect = callids[total_direct:]
 
@@ -430,9 +445,6 @@ class FaaSInvoker(Invoker):
                          ' {} - Going to run {} activations in {} workers'
                          .format(job.executor_id, job.job_id, free_workers,
                                  len(callids_to_invoke_direct), consumed_workers))
-
-            def _callback(future):
-                future.result()
 
             invoke_futures = []
             for call_ids_range in iterchunks(callids_to_invoke_direct, job.chunksize):

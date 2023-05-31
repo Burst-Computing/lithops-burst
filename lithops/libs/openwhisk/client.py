@@ -24,7 +24,6 @@ import http.client
 from urllib.parse import urlparse
 from urllib3.exceptions import InsecureRequestWarning
 
-
 urllib3.disable_warnings(InsecureRequestWarning)
 logger = logging.getLogger(__name__)
 
@@ -226,12 +225,15 @@ class OpenWhiskClient:
         else:
             logger.debug(f"OK --> Created package {package}")
 
-    def invoke(self, package, action_name, payload={}, is_ow_action=False, self_invoked=False):
+    def invoke(self, package, action_name, payload={}, is_ow_action=False, self_invoked=False, burst=False):
         """
         Invoke an WSK function by using new request.
         """
         url = '/'.join([self.url, self.namespace, 'actions', package, action_name])
+        if burst:
+            url += '?burst=true'
         parsed_url = urlparse(url)
+        logger.info('Url invocation Openwhisk: %s', url)
 
         try:
             if is_ow_action:

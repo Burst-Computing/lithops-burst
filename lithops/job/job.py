@@ -52,6 +52,7 @@ def create_map_job(
     exclude_modules,
     execution_timeout,
     chunksize=None,
+    burst=None,
     extra_args=None,
     obj_chunk_size=None,
     obj_newline='\n',
@@ -85,6 +86,7 @@ def create_map_job(
         func=map_function,
         iterdata=map_iterdata,
         chunksize=chunksize,
+        burst=burst,
         runtime_meta=runtime_meta,
         runtime_memory=runtime_memory,
         extra_env=extra_env,
@@ -171,7 +173,8 @@ def _create_job(
     exclude_modules,
     execution_timeout,
     host_job_meta,
-    chunksize=None
+    chunksize=None,
+    burst=False
 ):
     """
     Creates a new Job
@@ -188,6 +191,7 @@ def _create_job(
 
     job = SimpleNamespace()
     job.chunksize = chunksize or config['lithops']['chunksize']
+    job.burst = burst
     job.worker_processes = config[backend]['worker_processes']
     job.execution_timeout = execution_timeout or config['lithops']['execution_timeout']
     job.executor_id = executor_id
