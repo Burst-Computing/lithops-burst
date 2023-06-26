@@ -249,6 +249,7 @@ class OpenWhiskClient:
                 resp = conn.getresponse()
                 resp_status = resp.status
                 data = json.loads(resp.read().decode("utf-8"))
+                logger.info('Response data: %s', data)
                 conn.close()
         except Exception as e:
             logger.debug(f'Invocation Failed: {str(e)}. Doing reinvocation')
@@ -260,6 +261,8 @@ class OpenWhiskClient:
 
         if resp_status == 202 and 'activationId' in data:
             return data["activationId"]
+        elif resp_status == 202 and 'activationIds' in data:
+            return data["activationIds"][0]
         elif resp_status == 429:
             return None  # "Too many concurrent requests in flight"
         else:
