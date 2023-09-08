@@ -50,10 +50,10 @@ We have executed the script below (activating 30 functions) over a single invoke
 <table>
 <tr>
 <td>
-<img src="/home/manri-urv/urv/lithops-burst/examples/burst_graphs/examples_histogram.png" >
+<img src="examples/burst_graphs/examples_histogram.png" >
 </td>
 <td>
-<img src="/home/manri-urv/urv/lithops-burst/examples/burst_graphs/examples_histogram_burst.png">
+<img src="examples/burst_graphs/examples_histogram_burst.png">
 </td>
 </tr>
 <tr>
