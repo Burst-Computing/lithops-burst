@@ -306,6 +306,7 @@ class FunctionExecutor:
         map_iterdata: List[Union[List[Any], Tuple[Any, ...], Dict[str, Any]]],
         reduce_function: Callable,
         chunksize: Optional[int] = None,
+        burst: Optional[bool] = None,
         extra_args: Optional[Union[List[Any], Tuple[Any, ...], Dict[str, Any]]] = None,
         extra_args_reduce: Optional[Union[List[Any], Tuple[Any, ...], Dict[str, Any]]] = None,
         extra_env: Optional[Dict[str, str]] = None,
@@ -327,6 +328,7 @@ class FunctionExecutor:
         :param map_iterdata: An iterable of input data
         :param reduce_function: The function to reduce over the futures
         :param chunksize: Split map_iteradata in chunks of this size. Lithops spawns 1 worker per resulting chunk. Default 1
+        :param burst: Determines if the map will be run in burst mode or not. Default False
         :param extra_args: Additional arguments to pass to function activation. Default None
         :param extra_args_reduce: Additional arguments to pass to the reduce function activation. Default None
         :param extra_env: Additional environment variables for action environment. Default None
@@ -355,6 +357,7 @@ class FunctionExecutor:
             job_id=map_job_id,
             map_function=map_function,
             iterdata=map_iterdata,
+            burst=burst,
             chunksize=chunksize,
             runtime_meta=runtime_meta,
             runtime_memory=map_runtime_memory,

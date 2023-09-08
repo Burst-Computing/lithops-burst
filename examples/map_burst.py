@@ -8,18 +8,25 @@ fexec.get_result()
 import os
 import time
 from pprint import pprint
-
 import lithops
 
+NUM_ACTIVATIONS = 30     # This value defines number of activations to be spawned in burst mode
+BURST_ENABLED = True    # This value defines if burst mode is enabled or not
 
 def my_map_function(id, x):
+    """
+    This function will be executed in burst mode in Openwhisk
+    Sleeps for 5 seconds to simulate a long-running function
+    """
     print(f"I'm activation number {id}")
-    return x + 7
+    time.sleep(5)
+    return x
 
 
 if __name__ == "__main__":
-    iterdata = [1, 2, 3, 4]
+    iterdata = range(NUM_ACTIVATIONS)
     fexec = lithops.FunctionExecutor()
-    fexec.map(my_map_function, iterdata)
+    fexec.map(my_map_function, iterdata, burst=BURST_ENABLED)
     print(fexec.get_result())
+    fexec.plot()
     fexec.clean()
