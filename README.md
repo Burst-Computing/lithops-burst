@@ -16,28 +16,46 @@ This version modifies the `map()` and `map_reduce()` funtions of Lithops API. In
 ## Execute the burst
 In order to test the burst execution with both Lithops as client and BurstWhisk as compute backend, the list of steps to follow is specified here:
 
- 1. Define BurstWhisk as the compute backend of the `FunctionExecutor` (via `.config` file or other ways)
- 2. Execute `examples/map_burst.py` Python script. 
+ 1. Clone this repository and access it:
 
-```python
-NUM_ACTIVATIONS = 30 # This value defines number of activations to be spawned in burst mode  
-BURST_ENABLED = True # This value defines if burst mode is enabled or not  
-  
-def my_map_function(id, x):  
-  """  
- This function will be executed in burst mode in Openwhisk Sleeps for 5 seconds to simulate a long-running function """  print(f"I'm activation number {id}")  
-  time.sleep(5)  
-  return x  
-  
-  
-if __name__ == "__main__":  
-  iterdata = range(NUM_ACTIVATIONS)  
-  fexec = lithops.FunctionExecutor()  
-  fexec.map(my_map_function, iterdata, burst=BURST_ENABLED)  
-  print(fexec.get_result())  
-  fexec.plot()  
-  fexec.clean()
-  ```
+    ```bash
+    git clone https://github.com/CLOUDLAB-URV/lithops-burst.git
+    cd lithops-burst
+    ```
+
+ 2. Define BurstWhisk as the compute backend of the `FunctionExecutor` (via `.config` file or the other possible ways):
+
+    ```yaml
+     lithops:
+         backend: openwhisk
+
+     openwhisk:
+         endpoint    : <YOUR_BURSTWHISK_ENDPOINT>
+         namespace   : <NAMESPACE>
+         api_key     : <AUTH_KEY>
+         insecure    : <True/False>
+    ```
+ 3. Execute `examples/map_burst.py` Python script. 
+
+    ```python
+    NUM_ACTIVATIONS = 30 # This value defines number of activations to be spawned in burst mode  
+    BURST_ENABLED = True # This value defines if burst mode is enabled or not  
+      
+    def my_map_function(id, x):  
+      """  
+     This function will be executed in burst mode in Openwhisk Sleeps for 5 seconds to simulate a long-running function """  print(f"I'm activation number {id}")  
+      time.sleep(5)  
+      return x  
+      
+      
+    if __name__ == "__main__":  
+      iterdata = range(NUM_ACTIVATIONS)  
+      fexec = lithops.FunctionExecutor()  
+      fexec.map(my_map_function, iterdata, burst=BURST_ENABLED)  
+      print(fexec.get_result())  
+      fexec.plot()  
+      fexec.clean()
+      ```
 
 The `map_burst.py` script is above. We can activate or deactivate burst mode and regulate the number of activated functions with constants on the script top.
 
