@@ -54,6 +54,7 @@ class MinioStorageBackend:
             aws_secret_access_key=minio_config['secret_access_key'],
             aws_session_token=minio_config.get('session_token'),
             config=client_config,
+            verify=False,
             endpoint_url=service_endpoint
         )
 

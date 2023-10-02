@@ -231,7 +231,7 @@ class OpenWhiskClient:
         """
         url = '/'.join([self.url, self.namespace, 'actions', package, action_name])
         if burst:
-            url += '?burst=true'
+            url += f'?burst=true&lithops=true'
         parsed_url = urlparse(url)
         logger.info('Url invocation Openwhisk: %s', url)
 

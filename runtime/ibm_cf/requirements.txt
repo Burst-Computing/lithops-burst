@@ -46,3 +46,4 @@ redis
 pika
 #elasticsearch
 etcd3
+boto3

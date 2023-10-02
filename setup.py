@@ -13,6 +13,7 @@ install_requires = [
     'lxml',
     'tblib',
     'docker',
+    'boto3',
     'requests',
     'seaborn',
     'paramiko',
@@ -28,9 +29,6 @@ install_requires = [
 
 
 extras_require = {
-    'aws': [
-        'boto3'
-    ],
     'gcp': [
         'httplib2',
         'google-cloud-storage',
