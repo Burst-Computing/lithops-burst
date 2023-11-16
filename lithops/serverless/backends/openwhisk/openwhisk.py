@@ -185,9 +185,11 @@ class OpenWhiskBackend:
         """
         action_name = self._format_function_name(docker_image_name, runtime_memory)
         burst = payload['burst']
+        granularity = payload['granularity']
+        join = payload['join']
 
         activation_id = self.cf_client.invoke(self.package, action_name,
-                                              payload, self.is_lithops_worker, burst=burst)
+                                              payload, self.is_lithops_worker, burst=burst, granularity=granularity, join=join)
 
         return activation_id
 

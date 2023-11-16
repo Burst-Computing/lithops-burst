@@ -143,6 +143,8 @@ class Invoker:
                    'data_key': job.data_key,
                    'extra_env': job.extra_env,
                    'burst': job.burst,
+                   'granularity': job.granularity,
+                   'join': job.join,
                    'total_calls': job.total_calls,
                    'execution_timeout': job.execution_timeout,
                    'data_byte_ranges': job.data_byte_ranges,

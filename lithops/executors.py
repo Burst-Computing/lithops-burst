@@ -235,6 +235,8 @@ class FunctionExecutor:
         map_iterdata: List[Union[List[Any], Tuple[Any, ...], Dict[str, Any]]],
         chunksize: Optional[int] = None,
         burst: Optional[bool] = None,
+        granularity: Optional[int] = None,
+        join: Optional[bool] = False,
         extra_args: Optional[Union[List[Any], Tuple[Any, ...], Dict[str, Any]]] = None,
         extra_env: Optional[Dict[str, str]] = None,
         runtime_memory: Optional[int] = None,
@@ -252,6 +254,8 @@ class FunctionExecutor:
         :param map_iterdata: An iterable of input data (e.g python list).
         :param chunksize: Split map_iteradata in chunks of this size. Lithops spawns 1 worker per resulting chunk
         :param burst: Determines if the map will be run in burst mode or not
+        :param granularity: Size of workers inside containers in burst. Only used in burst mode
+        :param join: Indicates if containers inside same machine in burst can be joined or not. Only used in burst mode
         :param extra_args: Additional arguments to pass to each map_function activation
         :param extra_env: Additional environment variables for function environment
         :param runtime_memory: Memory (in MB) to use to run the functions
@@ -279,6 +283,8 @@ class FunctionExecutor:
             iterdata=map_iterdata,
             chunksize=chunksize,
             burst=burst,
+            granularity=granularity,
+            join=join,
             runtime_meta=runtime_meta,
             runtime_memory=runtime_memory,
             extra_env=extra_env,

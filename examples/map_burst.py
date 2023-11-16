@@ -10,7 +10,7 @@ import time
 from pprint import pprint
 import lithops
 
-NUM_ACTIVATIONS = 30     # This value defines number of activations to be spawned in burst mode
+NUM_ACTIVATIONS = 20     # This value defines number of activations to be spawned in burst mode
 BURST_ENABLED = True    # This value defines if burst mode is enabled or not
 
 def my_map_function(id, x):
@@ -26,7 +26,19 @@ def my_map_function(id, x):
 if __name__ == "__main__":
     iterdata = range(NUM_ACTIVATIONS)
     fexec = lithops.FunctionExecutor()
-    fexec.map(my_map_function, iterdata, burst=BURST_ENABLED)
-    print(fexec.get_result())
+    fexec.map(my_map_function, iterdata, burst=BURST_ENABLED, runtime_memory=2048, granularity=5, join=True)
+    future_list = fexec.get_result()
+    print(future_list)
+    # dump future_list to a file
+    try:
+        os.remove('result.csv')
+    except OSError:
+        pass
+    with open('result.csv', 'a') as f:
+        for i in range(NUM_ACTIVATIONS):
+            if i == 0:
+                f.write(','.join(fexec.futures[i].stats.keys()) + '\n')
+            f.write(','.join(str(i) for i in fexec.futures[i].stats.values()) + '\n')
     fexec.plot()
+    f.close()
     fexec.clean()

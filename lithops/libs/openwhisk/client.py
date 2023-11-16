@@ -225,13 +225,18 @@ class OpenWhiskClient:
         else:
             logger.debug(f"OK --> Created package {package}")
 
-    def invoke(self, package, action_name, payload={}, is_ow_action=False, self_invoked=False, burst=False):
+    def invoke(self, package, action_name, payload={}, is_ow_action=False, self_invoked=False, burst=False,
+               granularity=None, join=False):
         """
         Invoke an WSK function by using new request.
         """
         url = '/'.join([self.url, self.namespace, 'actions', package, action_name])
         if burst:
             url += f'?burst=true&lithops=true'
+            if granularity is not None:
+                url += f'&granularity={granularity}'
+            if join:
+                url += f'&join=true'
         parsed_url = urlparse(url)
         logger.info('Url invocation Openwhisk: %s', url)
 
